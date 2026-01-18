@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { loadExcelData } from './_lib/excelService.js';
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -16,7 +16,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    let { events } = loadExcelData();
+    let { events } = await loadExcelData();
     const { category, month, search } = req.query;
 
     // Apply filters

@@ -1,6 +1,5 @@
 import * as XLSX from 'xlsx';
-import * as fs from 'fs';
-import * as path from 'path';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
 // Types
 export type InitiativeStatus =
@@ -54,6 +53,25 @@ export interface DashboardStats {
   departmentWorkload: Record<string, number>;
   teamMembers: string[];
 }
+
+// Cloudflare R2 configuration
+const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
+const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
+const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
+const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'motionvii-saap';
+const R2_FILE_KEY = process.env.R2_FILE_KEY || 'MotionVii_SAAP_2026.xlsx';
+
+// Create S3 client for R2
+const s3Client = R2_ACCOUNT_ID && R2_ACCESS_KEY_ID && R2_SECRET_ACCESS_KEY
+  ? new S3Client({
+      region: 'auto',
+      endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: R2_ACCESS_KEY_ID,
+        secretAccessKey: R2_SECRET_ACCESS_KEY,
+      },
+    })
+  : null;
 
 // Column mappings
 const INITIATIVE_COLUMNS = {
@@ -122,96 +140,131 @@ function normalizeStatus(status: string): InitiativeStatus {
   return statusMap[status?.toLowerCase()?.trim()] || 'Not Started';
 }
 
-export function loadExcelData(): { initiatives: Initiative[]; events: Event[] } {
-  // Try multiple paths for the Excel file
-  const possiblePaths = [
-    path.join(process.cwd(), 'data', 'MotionVii_SAAP_2026.xlsx'),
-    path.join(process.cwd(), 'MotionVii_SAAP_2026.xlsx'),
-    path.resolve(__dirname, '../../data/MotionVii_SAAP_2026.xlsx'),
-  ];
-
-  let excelPath = '';
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) {
-      excelPath = p;
-      break;
-    }
-  }
-
-  if (!excelPath) {
-    console.error('Excel file not found in any expected location');
-    return { initiatives: [], events: [] };
+// Fetch Excel from Cloudflare R2
+async function fetchExcelFromR2(): Promise<Buffer | null> {
+  if (!s3Client) {
+    console.log('R2 not configured, using fallback data');
+    return null;
   }
 
   try {
-    const workbook = XLSX.readFile(excelPath);
-    const initiatives: Initiative[] = [];
-    const events: Event[] = [];
+    const command = new GetObjectCommand({
+      Bucket: R2_BUCKET_NAME,
+      Key: R2_FILE_KEY,
+    });
 
-    // Parse Initiatives sheet
-    const initiativesSheet = workbook.Sheets['Initiatives'] || workbook.Sheets[workbook.SheetNames[0]];
-    if (initiativesSheet) {
-      const data = XLSX.utils.sheet_to_json(initiativesSheet, { header: 1 }) as any[][];
+    const response = await s3Client.send(command);
+    const chunks: Uint8Array[] = [];
 
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row || row.length === 0 || !row[INITIATIVE_COLUMNS.initiative]) continue;
-
-        initiatives.push({
-          id: generateId(),
-          objective: row[INITIATIVE_COLUMNS.objective]?.toString() || '',
-          keyResult: row[INITIATIVE_COLUMNS.keyResult]?.toString() || '',
-          department: row[INITIATIVE_COLUMNS.department]?.toString() || '',
-          initiative: row[INITIATIVE_COLUMNS.initiative]?.toString() || '',
-          monthlyObjective: row[INITIATIVE_COLUMNS.monthlyObjective]?.toString() || '',
-          weeklyTasks: row[INITIATIVE_COLUMNS.weeklyTasks]?.toString() || '',
-          startDate: parseExcelDate(row[INITIATIVE_COLUMNS.startDate]),
-          endDate: parseExcelDate(row[INITIATIVE_COLUMNS.endDate]),
-          resourcesFinancial: row[INITIATIVE_COLUMNS.resourcesFinancial]?.toString() || '',
-          resourcesNonFinancial: row[INITIATIVE_COLUMNS.resourcesNonFinancial]?.toString() || '',
-          personInCharge: row[INITIATIVE_COLUMNS.personInCharge]?.toString() || '',
-          accountable: row[INITIATIVE_COLUMNS.accountable]?.toString() || '',
-          status: normalizeStatus(row[INITIATIVE_COLUMNS.status]?.toString() || ''),
-          remarks: row[INITIATIVE_COLUMNS.remarks]?.toString() || '',
-          rowIndex: i + 1,
-        });
+    if (response.Body) {
+      // @ts-ignore - Body is a readable stream
+      for await (const chunk of response.Body) {
+        chunks.push(chunk);
       }
     }
 
-    // Parse Events sheet
-    const eventsSheet = workbook.Sheets['Events'] || workbook.Sheets[workbook.SheetNames[1]];
-    if (eventsSheet) {
-      const data = XLSX.utils.sheet_to_json(eventsSheet, { header: 1 }) as any[][];
-
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row || row.length === 0 || !row[EVENT_COLUMNS.eventName]) continue;
-
-        events.push({
-          id: generateId(),
-          eventName: row[EVENT_COLUMNS.eventName]?.toString() || '',
-          category: row[EVENT_COLUMNS.category]?.toString() || 'Other',
-          dateMonth: row[EVENT_COLUMNS.dateMonth]?.toString() || '',
-          location: row[EVENT_COLUMNS.location]?.toString() || '',
-          estimatedCost: parseCost(row[EVENT_COLUMNS.estimatedCost]),
-          whyAttend: row[EVENT_COLUMNS.whyAttend]?.toString() || '',
-          targetCompanies: row[EVENT_COLUMNS.targetCompanies]?.toString() || '',
-          actionRequired: row[EVENT_COLUMNS.actionRequired]?.toString() || '',
-          status: row[EVENT_COLUMNS.status]?.toString() || '',
-          rowIndex: i + 1,
-        });
-      }
-    }
-
-    return { initiatives, events };
+    return Buffer.concat(chunks);
   } catch (error) {
-    console.error('Error loading Excel data:', error);
-    return { initiatives: [], events: [] };
+    console.error('Error fetching from R2:', error);
+    return null;
   }
 }
 
-export function getDashboardStats(): DashboardStats {
-  const { initiatives, events } = loadExcelData();
+function parseWorkbook(workbook: XLSX.WorkBook): { initiatives: Initiative[]; events: Event[] } {
+  const initiatives: Initiative[] = [];
+  const events: Event[] = [];
+
+  // Parse Initiatives sheet
+  const initiativesSheet = workbook.Sheets['Initiatives'] || workbook.Sheets[workbook.SheetNames[0]];
+  if (initiativesSheet) {
+    const data = XLSX.utils.sheet_to_json(initiativesSheet, { header: 1 }) as any[][];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (!row || row.length === 0 || !row[INITIATIVE_COLUMNS.initiative]) continue;
+
+      initiatives.push({
+        id: generateId(),
+        objective: row[INITIATIVE_COLUMNS.objective]?.toString() || '',
+        keyResult: row[INITIATIVE_COLUMNS.keyResult]?.toString() || '',
+        department: row[INITIATIVE_COLUMNS.department]?.toString() || '',
+        initiative: row[INITIATIVE_COLUMNS.initiative]?.toString() || '',
+        monthlyObjective: row[INITIATIVE_COLUMNS.monthlyObjective]?.toString() || '',
+        weeklyTasks: row[INITIATIVE_COLUMNS.weeklyTasks]?.toString() || '',
+        startDate: parseExcelDate(row[INITIATIVE_COLUMNS.startDate]),
+        endDate: parseExcelDate(row[INITIATIVE_COLUMNS.endDate]),
+        resourcesFinancial: row[INITIATIVE_COLUMNS.resourcesFinancial]?.toString() || '',
+        resourcesNonFinancial: row[INITIATIVE_COLUMNS.resourcesNonFinancial]?.toString() || '',
+        personInCharge: row[INITIATIVE_COLUMNS.personInCharge]?.toString() || '',
+        accountable: row[INITIATIVE_COLUMNS.accountable]?.toString() || '',
+        status: normalizeStatus(row[INITIATIVE_COLUMNS.status]?.toString() || ''),
+        remarks: row[INITIATIVE_COLUMNS.remarks]?.toString() || '',
+        rowIndex: i + 1,
+      });
+    }
+  }
+
+  // Parse Events sheet
+  const eventsSheet = workbook.Sheets['Events'] || workbook.Sheets[workbook.SheetNames[1]];
+  if (eventsSheet) {
+    const data = XLSX.utils.sheet_to_json(eventsSheet, { header: 1 }) as any[][];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (!row || row.length === 0 || !row[EVENT_COLUMNS.eventName]) continue;
+
+      events.push({
+        id: generateId(),
+        eventName: row[EVENT_COLUMNS.eventName]?.toString() || '',
+        category: row[EVENT_COLUMNS.category]?.toString() || 'Other',
+        dateMonth: row[EVENT_COLUMNS.dateMonth]?.toString() || '',
+        location: row[EVENT_COLUMNS.location]?.toString() || '',
+        estimatedCost: parseCost(row[EVENT_COLUMNS.estimatedCost]),
+        whyAttend: row[EVENT_COLUMNS.whyAttend]?.toString() || '',
+        targetCompanies: row[EVENT_COLUMNS.targetCompanies]?.toString() || '',
+        actionRequired: row[EVENT_COLUMNS.actionRequired]?.toString() || '',
+        status: row[EVENT_COLUMNS.status]?.toString() || '',
+        rowIndex: i + 1,
+      });
+    }
+  }
+
+  return { initiatives, events };
+}
+
+// Cache for data
+let cachedData: { initiatives: Initiative[]; events: Event[] } | null = null;
+let cacheTime: number = 0;
+const CACHE_TTL = 60000; // 1 minute cache
+
+export async function loadExcelData(): Promise<{ initiatives: Initiative[]; events: Event[] }> {
+  // Return cached data if fresh
+  if (cachedData && Date.now() - cacheTime < CACHE_TTL) {
+    return cachedData;
+  }
+
+  try {
+    // Try to fetch from R2
+    const buffer = await fetchExcelFromR2();
+
+    if (buffer) {
+      const workbook = XLSX.read(buffer, { type: 'buffer' });
+      cachedData = parseWorkbook(workbook);
+      cacheTime = Date.now();
+      return cachedData;
+    }
+
+    // Fallback: return empty data if R2 not configured
+    console.log('No data source available');
+    return { initiatives: [], events: [] };
+  } catch (error) {
+    console.error('Error loading Excel data:', error);
+    return cachedData || { initiatives: [], events: [] };
+  }
+}
+
+export async function getDashboardStats(): Promise<DashboardStats> {
+  const { initiatives, events } = await loadExcelData();
 
   const initiativesByStatus: Record<InitiativeStatus, number> = {
     'Not Started': 0,
