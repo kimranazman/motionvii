@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #00d4ff;
+  --color-secondary: #0066ff;
+  --color-accent: #00ff88;
+  --color-glow: rgba(0, 212, 255, 0.5);
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-surface: rgba(255, 255, 255, 0.05);
+  --color-surface-hover: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-hover: rgba(255, 255, 255, 0.2);
+
+  /* Status colors */
+  --color-status-not-started: #6b7280;
+  --color-status-in-progress: #3b82f6;
+  --color-status-on-hold: #f59e0b;
+  --color-status-at-risk: #ef4444;
+  --color-status-completed: #22c55e;
+
+  /* Event category colors */
+  --color-event-conference: #8b5cf6;
+  --color-event-exhibition: #ec4899;
+  --color-event-training: #14b8a6;
+  --color-event-workshop: #f97316;
+  --color-event-networking: #06b6d4;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* Glass effect utility */
+.glass {
+  background: var(--color-surface);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+}
+
+.glass:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+}
+
+/* Glow effect utility */
+.glow {
+  box-shadow: 0 0 20px var(--color-glow);
+}
+
+.glow-sm {
+  box-shadow: 0 0 10px var(--color-glow);
+}
+
+.glow-lg {
+  box-shadow: 0 0 40px var(--color-glow);
+}
+
+/* Text glow */
+.text-glow {
+  text-shadow: 0 0 10px var(--color-glow);
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+}
+
+/* Animation utilities */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--color-glow);
+  }
+  50% {
+    box-shadow: 0 0 40px var(--color-glow);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* FullCalendar custom styles */
+.fc {
+  --fc-border-color: var(--color-border);
+  --fc-button-bg-color: var(--color-surface);
+  --fc-button-border-color: var(--color-border);
+  --fc-button-text-color: var(--color-text-primary);
+  --fc-button-hover-bg-color: var(--color-surface-hover);
+  --fc-button-hover-border-color: var(--color-border-hover);
+  --fc-button-active-bg-color: var(--color-primary);
+  --fc-today-bg-color: rgba(0, 212, 255, 0.1);
+  --fc-event-bg-color: var(--color-primary);
+  --fc-event-border-color: var(--color-primary);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: var(--color-surface);
+}
+
+.fc .fc-toolbar-title {
+  color: var(--color-text-primary);
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number {
+  color: var(--color-text-secondary);
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: var(--color-border);
+}
