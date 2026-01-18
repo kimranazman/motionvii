@@ -52,11 +52,14 @@ npm run dev
    - Access Key ID
    - Secret Access Key
 
-### Step 3: Upload Excel File to R2
+### Step 3: Upload JSON Data to R2
 
 ```bash
 # Install script dependencies
 cd scripts && npm install && cd ..
+
+# Convert Excel to JSON (first time only)
+node scripts/convert-to-json.js
 
 # Set environment variables
 export R2_ACCOUNT_ID="your-cloudflare-account-id"
@@ -64,14 +67,14 @@ export R2_ACCESS_KEY_ID="your-r2-access-key"
 export R2_SECRET_ACCESS_KEY="your-r2-secret-key"
 export R2_BUCKET_NAME="motionvii-saap"
 
-# Upload the Excel file
-node scripts/upload-to-r2.js
+# Upload the JSON file
+node scripts/upload-json-to-r2.js
 ```
 
 Or upload manually via Cloudflare Dashboard:
 1. Go to R2 > `motionvii-saap` bucket
 2. Click **Upload**
-3. Upload `data/MotionVii_SAAP_2026.xlsx`
+3. Upload `data/saap-data.json`
 
 ### Step 4: Deploy to Vercel
 
@@ -162,7 +165,7 @@ Add to your NAS crontab:
 | `R2_ACCESS_KEY_ID` | R2 API Access Key | Yes (production) |
 | `R2_SECRET_ACCESS_KEY` | R2 API Secret Key | Yes (production) |
 | `R2_BUCKET_NAME` | R2 bucket name | No (default: motionvii-saap) |
-| `R2_FILE_KEY` | Excel filename in R2 | No (default: MotionVii_SAAP_2026.xlsx) |
+| `R2_FILE_KEY` | JSON filename in R2 | No (default: saap-data.json) |
 
 ## API Endpoints
 

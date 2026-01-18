@@ -1,4 +1,3 @@
-import * as XLSX from 'xlsx';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
 // Types
@@ -25,7 +24,6 @@ export interface Initiative {
   accountable: string;
   status: InitiativeStatus;
   remarks: string;
-  rowIndex: number;
 }
 
 export interface Event {
@@ -40,7 +38,6 @@ export interface Event {
   targetCompanies: string;
   actionRequired: string;
   status: string;
-  rowIndex: number;
 }
 
 export interface DashboardStats {
@@ -55,12 +52,21 @@ export interface DashboardStats {
   teamMembers: string[];
 }
 
+interface SaapData {
+  initiatives: Initiative[];
+  events: Event[];
+  metadata?: {
+    lastUpdated: string;
+    revenueTarget: number;
+  };
+}
+
 // Cloudflare R2 configuration
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
 const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'motionvii-saap';
-const R2_FILE_KEY = process.env.R2_FILE_KEY || 'MotionVii_SAAP_2026.xlsx';
+const R2_FILE_KEY = process.env.R2_FILE_KEY || 'saap-data.json';
 
 // Create S3 client for R2
 const s3Client = R2_ACCOUNT_ID && R2_ACCESS_KEY_ID && R2_SECRET_ACCESS_KEY
@@ -74,67 +80,6 @@ const s3Client = R2_ACCOUNT_ID && R2_ACCESS_KEY_ID && R2_SECRET_ACCESS_KEY
     })
   : null;
 
-// Column mappings
-const INITIATIVE_COLUMNS = {
-  objective: 0,
-  keyResult: 1,
-  department: 2,
-  initiative: 3,
-  monthlyObjective: 4,
-  weeklyTasks: 5,
-  startDate: 6,
-  endDate: 7,
-  resourcesFinancial: 8,
-  resourcesNonFinancial: 9,
-  personInCharge: 10,
-  accountable: 11,
-  status: 12,
-  remarks: 13,
-};
-
-const EVENT_COLUMNS = {
-  priority: 0,      // A
-  eventName: 1,     // B
-  category: 2,      // C
-  dateMonth: 3,     // D
-  location: 4,      // E
-  estimatedCost: 5, // F
-  whyAttend: 6,     // G
-  targetCompanies: 7, // H
-  actionRequired: 8,  // I
-  status: 9,        // J
-};
-
-// Row offsets (0-indexed) - headers are at these rows, data starts after
-const INITIATIVES_HEADER_ROW = 6; // Row 7 in Excel (0-indexed = 6)
-const EVENTS_HEADER_ROW = 3;      // Row 4 in Excel (0-indexed = 3)
-
-function generateId(): string {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
-
-function parseExcelDate(value: any): string | null {
-  if (!value) return null;
-  if (typeof value === 'number') {
-    const date = XLSX.SSF.parse_date_code(value);
-    if (date) {
-      return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`;
-    }
-  }
-  if (typeof value === 'string') return value;
-  return null;
-}
-
-function parseCost(value: any): number {
-  if (!value) return 0;
-  if (typeof value === 'number') return value;
-  if (typeof value === 'string') {
-    const cleaned = value.replace(/[RM,\s]/gi, '');
-    return parseFloat(cleaned) || 0;
-  }
-  return 0;
-}
-
 function normalizeStatus(status: string): InitiativeStatus {
   const statusMap: Record<string, InitiativeStatus> = {
     'not started': 'Not Started',
@@ -146,10 +91,10 @@ function normalizeStatus(status: string): InitiativeStatus {
   return statusMap[status?.toLowerCase()?.trim()] || 'Not Started';
 }
 
-// Fetch Excel from Cloudflare R2
-async function fetchExcelFromR2(): Promise<Buffer | null> {
+// Fetch JSON from Cloudflare R2
+async function fetchJsonFromR2(): Promise<SaapData | null> {
   if (!s3Client) {
-    console.log('R2 not configured, using fallback data');
+    console.log('R2 not configured, returning empty data');
     return null;
   }
 
@@ -169,108 +114,50 @@ async function fetchExcelFromR2(): Promise<Buffer | null> {
       }
     }
 
-    return Buffer.concat(chunks);
+    const buffer = Buffer.concat(chunks);
+    const jsonString = buffer.toString('utf-8');
+    const data = JSON.parse(jsonString) as SaapData;
+
+    // Normalize initiative statuses
+    data.initiatives = data.initiatives.map(initiative => ({
+      ...initiative,
+      status: normalizeStatus(initiative.status),
+    }));
+
+    return data;
   } catch (error) {
     console.error('Error fetching from R2:', error);
     return null;
   }
 }
 
-function parseWorkbook(workbook: XLSX.WorkBook): { initiatives: Initiative[]; events: Event[] } {
-  const initiatives: Initiative[] = [];
-  const events: Event[] = [];
-
-  // Parse Initiatives sheet - actual sheet name is "SAAP"
-  const initiativesSheet = workbook.Sheets['SAAP'] || workbook.Sheets['Initiatives'] || workbook.Sheets[workbook.SheetNames[0]];
-  if (initiativesSheet) {
-    const data = XLSX.utils.sheet_to_json(initiativesSheet, { header: 1 }) as any[][];
-
-    // Data starts after header row (INITIATIVES_HEADER_ROW + 1)
-    const dataStartRow = INITIATIVES_HEADER_ROW + 1;
-    for (let i = dataStartRow; i < data.length; i++) {
-      const row = data[i];
-      if (!row || row.length === 0 || !row[INITIATIVE_COLUMNS.initiative]) continue;
-
-      initiatives.push({
-        id: generateId(),
-        objective: row[INITIATIVE_COLUMNS.objective]?.toString() || '',
-        keyResult: row[INITIATIVE_COLUMNS.keyResult]?.toString() || '',
-        department: row[INITIATIVE_COLUMNS.department]?.toString() || '',
-        initiative: row[INITIATIVE_COLUMNS.initiative]?.toString() || '',
-        monthlyObjective: row[INITIATIVE_COLUMNS.monthlyObjective]?.toString() || '',
-        weeklyTasks: row[INITIATIVE_COLUMNS.weeklyTasks]?.toString() || '',
-        startDate: parseExcelDate(row[INITIATIVE_COLUMNS.startDate]),
-        endDate: parseExcelDate(row[INITIATIVE_COLUMNS.endDate]),
-        resourcesFinancial: row[INITIATIVE_COLUMNS.resourcesFinancial]?.toString() || '',
-        resourcesNonFinancial: row[INITIATIVE_COLUMNS.resourcesNonFinancial]?.toString() || '',
-        personInCharge: row[INITIATIVE_COLUMNS.personInCharge]?.toString() || '',
-        accountable: row[INITIATIVE_COLUMNS.accountable]?.toString() || '',
-        status: normalizeStatus(row[INITIATIVE_COLUMNS.status]?.toString() || ''),
-        remarks: row[INITIATIVE_COLUMNS.remarks]?.toString() || '',
-        rowIndex: i + 1,
-      });
-    }
-  }
-
-  // Parse Events sheet - actual sheet name is "Events to Attend"
-  const eventsSheet = workbook.Sheets['Events to Attend'] || workbook.Sheets['Events'] || workbook.Sheets[workbook.SheetNames[1]];
-  if (eventsSheet) {
-    const data = XLSX.utils.sheet_to_json(eventsSheet, { header: 1 }) as any[][];
-
-    // Data starts after header row (EVENTS_HEADER_ROW + 1)
-    const dataStartRow = EVENTS_HEADER_ROW + 1;
-    for (let i = dataStartRow; i < data.length; i++) {
-      const row = data[i];
-      if (!row || row.length === 0 || !row[EVENT_COLUMNS.eventName]) continue;
-
-      events.push({
-        id: generateId(),
-        priority: row[EVENT_COLUMNS.priority]?.toString() || '',
-        eventName: row[EVENT_COLUMNS.eventName]?.toString() || '',
-        category: row[EVENT_COLUMNS.category]?.toString() || 'Other',
-        dateMonth: row[EVENT_COLUMNS.dateMonth]?.toString() || '',
-        location: row[EVENT_COLUMNS.location]?.toString() || '',
-        estimatedCost: parseCost(row[EVENT_COLUMNS.estimatedCost]),
-        whyAttend: row[EVENT_COLUMNS.whyAttend]?.toString() || '',
-        targetCompanies: row[EVENT_COLUMNS.targetCompanies]?.toString() || '',
-        actionRequired: row[EVENT_COLUMNS.actionRequired]?.toString() || '',
-        status: row[EVENT_COLUMNS.status]?.toString() || '',
-        rowIndex: i + 1,
-      });
-    }
-  }
-
-  return { initiatives, events };
-}
-
 // Cache for data
-let cachedData: { initiatives: Initiative[]; events: Event[] } | null = null;
+let cachedData: SaapData | null = null;
 let cacheTime: number = 0;
 const CACHE_TTL = 60000; // 1 minute cache
 
 export async function loadExcelData(): Promise<{ initiatives: Initiative[]; events: Event[] }> {
   // Return cached data if fresh
   if (cachedData && Date.now() - cacheTime < CACHE_TTL) {
-    return cachedData;
+    return { initiatives: cachedData.initiatives, events: cachedData.events };
   }
 
   try {
     // Try to fetch from R2
-    const buffer = await fetchExcelFromR2();
+    const data = await fetchJsonFromR2();
 
-    if (buffer) {
-      const workbook = XLSX.read(buffer, { type: 'buffer' });
-      cachedData = parseWorkbook(workbook);
+    if (data) {
+      cachedData = data;
       cacheTime = Date.now();
-      return cachedData;
+      return { initiatives: data.initiatives, events: data.events };
     }
 
     // Fallback: return empty data if R2 not configured
     console.log('No data source available');
     return { initiatives: [], events: [] };
   } catch (error) {
-    console.error('Error loading Excel data:', error);
-    return cachedData || { initiatives: [], events: [] };
+    console.error('Error loading data:', error);
+    return cachedData ? { initiatives: cachedData.initiatives, events: cachedData.events } : { initiatives: [], events: [] };
   }
 }
 
@@ -308,7 +195,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   });
 
   const completedInitiatives = initiativesByStatus['Completed'];
-  const revenueProgress = Math.round((completedInitiatives / Math.max(initiatives.length, 1)) * 1000000);
+  const revenueTarget = cachedData?.metadata?.revenueTarget || 1000000;
+  const revenueProgress = Math.round((completedInitiatives / Math.max(initiatives.length, 1)) * revenueTarget);
 
   return {
     totalInitiatives: initiatives.length,
@@ -316,7 +204,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     totalEvents: events.length,
     eventsByCategory,
     totalEventsCost,
-    revenueTarget: 1000000,
+    revenueTarget,
     revenueProgress,
     departmentWorkload,
     teamMembers: Array.from(teamMembers),
