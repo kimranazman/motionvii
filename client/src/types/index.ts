@@ -49,6 +49,7 @@ export interface Initiative {
 // Event interface
 export interface Event {
   id: string;
+  priority: string;
   eventName: string;
   category: string;
   dateMonth: string;

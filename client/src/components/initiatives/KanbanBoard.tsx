@@ -1,8 +1,3 @@
-import { useDroppable } from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 import type { Initiative, InitiativeStatus } from '@/types';
 import { InitiativeCard } from './InitiativeCard';
 import { cn } from '@/lib/utils';
@@ -27,18 +22,12 @@ function KanbanColumn({
   status: InitiativeStatus;
   items: Initiative[];
 }) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: status,
-  });
-
   return (
     <div
-      ref={setNodeRef}
       className={cn(
         'flex flex-col min-w-[280px] max-w-[320px] flex-shrink-0',
         'glass rounded-xl border-t-4',
-        COLUMN_COLORS[status],
-        isOver && 'ring-2 ring-primary/50'
+        COLUMN_COLORS[status]
       )}
     >
       {/* Column Header */}
@@ -52,22 +41,17 @@ function KanbanColumn({
       </div>
 
       {/* Cards Container */}
-      <SortableContext
-        items={items.map((i) => i.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        <div className="flex-1 p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-320px)]">
-          {items.length === 0 ? (
-            <div className="py-8 text-center text-text-muted text-sm">
-              No initiatives
-            </div>
-          ) : (
-            items.map((initiative) => (
-              <InitiativeCard key={initiative.id} initiative={initiative} />
-            ))
-          )}
-        </div>
-      </SortableContext>
+      <div className="flex-1 p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-320px)]">
+        {items.length === 0 ? (
+          <div className="py-8 text-center text-text-muted text-sm">
+            No initiatives
+          </div>
+        ) : (
+          items.map((initiative) => (
+            <InitiativeCard key={initiative.id} initiative={initiative} />
+          ))
+        )}
+      </div>
     </div>
   );
 }

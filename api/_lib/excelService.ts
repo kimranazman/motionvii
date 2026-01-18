@@ -30,6 +30,7 @@ export interface Initiative {
 
 export interface Event {
   id: string;
+  priority: string;
   eventName: string;
   category: string;
   dateMonth: string;
@@ -92,16 +93,21 @@ const INITIATIVE_COLUMNS = {
 };
 
 const EVENT_COLUMNS = {
-  eventName: 0,
-  category: 1,
-  dateMonth: 2,
-  location: 3,
-  estimatedCost: 4,
-  whyAttend: 5,
-  targetCompanies: 6,
-  actionRequired: 7,
-  status: 8,
+  priority: 0,      // A
+  eventName: 1,     // B
+  category: 2,      // C
+  dateMonth: 3,     // D
+  location: 4,      // E
+  estimatedCost: 5, // F
+  whyAttend: 6,     // G
+  targetCompanies: 7, // H
+  actionRequired: 8,  // I
+  status: 9,        // J
 };
+
+// Row offsets (0-indexed) - headers are at these rows, data starts after
+const INITIATIVES_HEADER_ROW = 6; // Row 7 in Excel (0-indexed = 6)
+const EVENTS_HEADER_ROW = 3;      // Row 4 in Excel (0-indexed = 3)
 
 function generateId(): string {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -174,12 +180,14 @@ function parseWorkbook(workbook: XLSX.WorkBook): { initiatives: Initiative[]; ev
   const initiatives: Initiative[] = [];
   const events: Event[] = [];
 
-  // Parse Initiatives sheet
-  const initiativesSheet = workbook.Sheets['Initiatives'] || workbook.Sheets[workbook.SheetNames[0]];
+  // Parse Initiatives sheet - actual sheet name is "SAAP"
+  const initiativesSheet = workbook.Sheets['SAAP'] || workbook.Sheets['Initiatives'] || workbook.Sheets[workbook.SheetNames[0]];
   if (initiativesSheet) {
     const data = XLSX.utils.sheet_to_json(initiativesSheet, { header: 1 }) as any[][];
 
-    for (let i = 1; i < data.length; i++) {
+    // Data starts after header row (INITIATIVES_HEADER_ROW + 1)
+    const dataStartRow = INITIATIVES_HEADER_ROW + 1;
+    for (let i = dataStartRow; i < data.length; i++) {
       const row = data[i];
       if (!row || row.length === 0 || !row[INITIATIVE_COLUMNS.initiative]) continue;
 
@@ -204,17 +212,20 @@ function parseWorkbook(workbook: XLSX.WorkBook): { initiatives: Initiative[]; ev
     }
   }
 
-  // Parse Events sheet
-  const eventsSheet = workbook.Sheets['Events'] || workbook.Sheets[workbook.SheetNames[1]];
+  // Parse Events sheet - actual sheet name is "Events to Attend"
+  const eventsSheet = workbook.Sheets['Events to Attend'] || workbook.Sheets['Events'] || workbook.Sheets[workbook.SheetNames[1]];
   if (eventsSheet) {
     const data = XLSX.utils.sheet_to_json(eventsSheet, { header: 1 }) as any[][];
 
-    for (let i = 1; i < data.length; i++) {
+    // Data starts after header row (EVENTS_HEADER_ROW + 1)
+    const dataStartRow = EVENTS_HEADER_ROW + 1;
+    for (let i = dataStartRow; i < data.length; i++) {
       const row = data[i];
       if (!row || row.length === 0 || !row[EVENT_COLUMNS.eventName]) continue;
 
       events.push({
         id: generateId(),
+        priority: row[EVENT_COLUMNS.priority]?.toString() || '',
         eventName: row[EVENT_COLUMNS.eventName]?.toString() || '',
         category: row[EVENT_COLUMNS.category]?.toString() || 'Other',
         dateMonth: row[EVENT_COLUMNS.dateMonth]?.toString() || '',
