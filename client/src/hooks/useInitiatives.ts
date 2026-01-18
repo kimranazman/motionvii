@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Initiative, InitiativeStatus, InitiativeFilters, ApiResponse } from '../types';
+import type { Initiative, InitiativeStatus, InitiativeFilters, ApiResponse } from '../types';
 
 const API_BASE = '/api';
 

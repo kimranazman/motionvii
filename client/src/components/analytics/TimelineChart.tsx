@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { Initiative } from '@/types';
+import type { Initiative } from '@/types';
 
 interface TimelineChartProps {
   initiatives: Initiative[];

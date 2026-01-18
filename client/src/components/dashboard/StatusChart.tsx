@@ -6,7 +6,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { InitiativeStatus } from '@/types';
+import type { InitiativeStatus } from '@/types';
 
 interface StatusChartProps {
   data: Record<InitiativeStatus, number>;

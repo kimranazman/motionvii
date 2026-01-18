@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { User, Calendar, Building2, GripVertical } from 'lucide-react';
-import { Initiative } from '@/types';
+import type { Initiative } from '@/types';
 import { cn, truncateText, formatDate } from '@/lib/utils';
 import { useAppStore } from '@/store';
 

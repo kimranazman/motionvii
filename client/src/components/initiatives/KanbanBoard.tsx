@@ -3,7 +3,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Initiative, InitiativeStatus } from '@/types';
+import type { Initiative, InitiativeStatus } from '@/types';
 import { InitiativeCard } from './InitiativeCard';
 import { cn } from '@/lib/utils';
 

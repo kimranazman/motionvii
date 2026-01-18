@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Event } from '@/types';
+import type { Event } from '@/types';
 import { cn, formatCurrency } from '@/lib/utils';
 
 interface EventsHeatmapProps {

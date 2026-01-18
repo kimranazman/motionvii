@@ -1,5 +1,5 @@
 import { MapPin, DollarSign, Calendar, Tag } from 'lucide-react';
-import { Event } from '@/types';
+import type { Event } from '@/types';
 import { useAppStore } from '@/store';
 import { formatCurrency, cn } from '@/lib/utils';
 

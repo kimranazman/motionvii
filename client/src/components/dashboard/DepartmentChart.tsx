@@ -48,7 +48,7 @@ export function DepartmentChart({ data }: DepartmentChartProps) {
                 borderRadius: '8px',
                 color: '#fff',
               }}
-              formatter={(value: number) => [`${value} initiatives`, 'Count']}
+              formatter={(value) => [`${value} initiatives`, 'Count']}
             />
             <Bar
               dataKey="count"

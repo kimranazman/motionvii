@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Initiative, Event, InitiativeFilters, EventFilters, InitiativeStatus } from '../types';
+import type { Initiative, Event, InitiativeFilters, EventFilters } from '../types';
 
 interface AppState {
   // Filters

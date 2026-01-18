@@ -100,7 +100,7 @@ export function RevenueChart({ target, current }: RevenueChartProps) {
                 borderRadius: '8px',
                 color: '#fff',
               }}
-              formatter={(value: number) => formatCurrency(value)}
+              formatter={(value) => formatCurrency(value as number)}
             />
             <Area
               type="monotone"

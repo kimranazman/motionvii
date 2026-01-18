@@ -1,7 +1,7 @@
 import { X, User, Calendar, Building2, DollarSign, FileText, AlertCircle } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { cn, formatDate, getStatusColor } from '@/lib/utils';
-import { InitiativeStatus } from '@/types';
+import type { InitiativeStatus } from '@/types';
 
 const STATUSES: InitiativeStatus[] = [
   'Not Started',

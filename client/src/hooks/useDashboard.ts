@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { DashboardStats, ApiResponse } from '../types';
+import type { DashboardStats, ApiResponse } from '../types';
 
 const API_BASE = '/api';
 const IS_PRODUCTION = import.meta.env.PROD;

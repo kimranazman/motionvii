@@ -1,5 +1,5 @@
 import { TrendingUp, Target, CheckCircle, AlertTriangle } from 'lucide-react';
-import { DashboardStats } from '@/types';
+import type { DashboardStats } from '@/types';
 import { formatCurrency, calculateProgress } from '@/lib/utils';
 
 interface ProgressSummaryProps {

@@ -2,7 +2,7 @@ import { Search, X, Filter } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { useInitiatives } from '@/hooks/useInitiatives';
 import { useMemo, useState } from 'react';
-import { InitiativeStatus } from '@/types';
+import type { InitiativeStatus } from '@/types';
 
 const STATUSES: InitiativeStatus[] = [
   'Not Started',

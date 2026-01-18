@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Event, EventFilters, ApiResponse } from '../types';
+import type { Event, EventFilters, ApiResponse } from '../types';
 
 const API_BASE = '/api';
 

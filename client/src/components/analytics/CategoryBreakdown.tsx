@@ -7,7 +7,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { Event } from '@/types';
+import type { Event } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 
 interface CategoryBreakdownProps {
@@ -90,7 +90,7 @@ export function CategoryBreakdown({ events }: CategoryBreakdownProps) {
                     borderRadius: '8px',
                     color: '#fff',
                   }}
-                  formatter={(value: number) => [`${value} events`, 'Count']}
+                  formatter={(value) => [`${value} events`, 'Count']}
                 />
                 <Legend
                   formatter={(value) => (
@@ -130,7 +130,7 @@ export function CategoryBreakdown({ events }: CategoryBreakdownProps) {
                     borderRadius: '8px',
                     color: '#fff',
                   }}
-                  formatter={(value: number) => [formatCurrency(value), 'Budget']}
+                  formatter={(value) => [formatCurrency(value as number), 'Budget']}
                 />
                 <Legend
                   formatter={(value) => (

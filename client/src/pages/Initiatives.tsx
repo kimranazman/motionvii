@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react';
 import {
   DndContext,
-  DragEndEvent,
   DragOverlay,
-  DragStartEvent,
   closestCorners,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { Header } from '@/components/layout/Header';
 import { KanbanBoard } from '@/components/initiatives/KanbanBoard';
 import { InitiativeCard } from '@/components/initiatives/InitiativeCard';
@@ -16,7 +15,7 @@ import { InitiativeModal } from '@/components/initiatives/InitiativeModal';
 import { FilterBar } from '@/components/initiatives/FilterBar';
 import { useInitiatives, useUpdateInitiativeStatus } from '@/hooks/useInitiatives';
 import { useAppStore } from '@/store';
-import { Initiative, InitiativeStatus } from '@/types';
+import type { Initiative, InitiativeStatus } from '@/types';
 
 const COLUMNS: InitiativeStatus[] = [
   'Not Started',
@@ -40,9 +39,7 @@ export function Initiatives() {
     })
   );
 
-  const columnData = useMemo(() => {
-    if (!initiatives) return {};
-
+  const columnData = useMemo((): Record<InitiativeStatus, Initiative[]> => {
     const columns: Record<InitiativeStatus, Initiative[]> = {
       'Not Started': [],
       'In Progress': [],
@@ -50,6 +47,8 @@ export function Initiatives() {
       'At Risk': [],
       'Completed': [],
     };
+
+    if (!initiatives) return columns;
 
     initiatives.forEach((initiative) => {
       if (columns[initiative.status]) {
