@@ -1,5 +1,3 @@
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-
 // Types
 export type InitiativeStatus =
   | 'Not Started'
@@ -61,24 +59,8 @@ interface SaapData {
   };
 }
 
-// Cloudflare R2 configuration
-const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
-const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
-const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'motionvii-saap';
-const R2_FILE_KEY = process.env.R2_FILE_KEY || 'saap-data.json';
-
-// Create S3 client for R2
-const s3Client = R2_ACCOUNT_ID && R2_ACCESS_KEY_ID && R2_SECRET_ACCESS_KEY
-  ? new S3Client({
-      region: 'auto',
-      endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-      credentials: {
-        accessKeyId: R2_ACCESS_KEY_ID,
-        secretAccessKey: R2_SECRET_ACCESS_KEY,
-      },
-    })
-  : null;
+// GitHub raw URL for the data file
+const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/kimranazman/motionvii/main/data/saap-data.json';
 
 function normalizeStatus(status: string): InitiativeStatus {
   const statusMap: Record<string, InitiativeStatus> = {
@@ -91,32 +73,22 @@ function normalizeStatus(status: string): InitiativeStatus {
   return statusMap[status?.toLowerCase()?.trim()] || 'Not Started';
 }
 
-// Fetch JSON from Cloudflare R2
-async function fetchJsonFromR2(): Promise<SaapData | null> {
-  if (!s3Client) {
-    console.log('R2 not configured, returning empty data');
-    return null;
-  }
-
+// Fetch JSON from GitHub
+async function fetchDataFromGitHub(): Promise<SaapData | null> {
   try {
-    const command = new GetObjectCommand({
-      Bucket: R2_BUCKET_NAME,
-      Key: R2_FILE_KEY,
+    const response = await fetch(GITHUB_DATA_URL, {
+      headers: {
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
     });
 
-    const response = await s3Client.send(command);
-    const chunks: Uint8Array[] = [];
-
-    if (response.Body) {
-      // @ts-ignore - Body is a readable stream
-      for await (const chunk of response.Body) {
-        chunks.push(chunk);
-      }
+    if (!response.ok) {
+      console.error('Failed to fetch from GitHub:', response.status, response.statusText);
+      return null;
     }
 
-    const buffer = Buffer.concat(chunks);
-    const jsonString = buffer.toString('utf-8');
-    const data = JSON.parse(jsonString) as SaapData;
+    const data = await response.json() as SaapData;
 
     // Normalize initiative statuses
     data.initiatives = data.initiatives.map(initiative => ({
@@ -126,7 +98,7 @@ async function fetchJsonFromR2(): Promise<SaapData | null> {
 
     return data;
   } catch (error) {
-    console.error('Error fetching from R2:', error);
+    console.error('Error fetching from GitHub:', error);
     return null;
   }
 }
@@ -143,8 +115,7 @@ export async function loadExcelData(): Promise<{ initiatives: Initiative[]; even
   }
 
   try {
-    // Try to fetch from R2
-    const data = await fetchJsonFromR2();
+    const data = await fetchDataFromGitHub();
 
     if (data) {
       cachedData = data;
@@ -152,12 +123,16 @@ export async function loadExcelData(): Promise<{ initiatives: Initiative[]; even
       return { initiatives: data.initiatives, events: data.events };
     }
 
-    // Fallback: return empty data if R2 not configured
-    console.log('No data source available');
-    return { initiatives: [], events: [] };
+    // Fallback: return cached data or empty
+    console.log('No data available from GitHub');
+    return cachedData
+      ? { initiatives: cachedData.initiatives, events: cachedData.events }
+      : { initiatives: [], events: [] };
   } catch (error) {
     console.error('Error loading data:', error);
-    return cachedData ? { initiatives: cachedData.initiatives, events: cachedData.events } : { initiatives: [], events: [] };
+    return cachedData
+      ? { initiatives: cachedData.initiatives, events: cachedData.events }
+      : { initiatives: [], events: [] };
   }
 }
 
