@@ -28,7 +28,7 @@ export function StatusChart({ data }: StatusChartProps) {
   }));
 
   return (
-    <div className="glass rounded-xl p-6">
+    <div className="bg-surface border border-border rounded-xl p-6">
       <h3 className="text-lg font-semibold text-text-primary mb-4">
         Initiative Status
       </h3>
@@ -54,10 +54,11 @@ export function StatusChart({ data }: StatusChartProps) {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: 'rgba(17, 17, 17, 0.9)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e2e8f0',
                 borderRadius: '8px',
-                color: '#fff',
+                color: '#0f172a',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             />
             <Legend

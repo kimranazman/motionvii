@@ -22,7 +22,7 @@ export function EventList({ events }: EventListProps) {
 
   if (events.length === 0) {
     return (
-      <div className="glass rounded-xl p-12 text-center">
+      <div className="bg-surface border border-border rounded-xl p-12 text-center">
         <CalendarX2 className="w-12 h-12 mx-auto text-text-muted/50 mb-3" />
         <p className="text-text-muted">No events found</p>
       </div>
@@ -39,18 +39,14 @@ export function EventList({ events }: EventListProps) {
             key={event.id}
             onClick={() => openEventModal(event)}
             className={cn(
-              'glass rounded-xl overflow-hidden cursor-pointer',
+              'bg-surface border border-border rounded-xl overflow-hidden cursor-pointer',
               'border-l-4 transition-all duration-200',
-              'hover:translate-y-[-2px] hover:border-border-hover',
-              'hover:shadow-[0_4px_12px_rgba(0,0,0,0.4),0_0_20px_rgba(0,212,255,0.1)]',
+              'hover:-translate-y-0.5 hover:shadow-md hover:border-border-hover',
               'group animate-fade-in-up opacity-0',
               categoryConfig.border
             )}
             style={{ animationDelay: `${index * 50}ms` }}
           >
-            {/* Subtle gradient overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
             <div className="relative p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 {/* Event Info */}
@@ -65,7 +61,7 @@ export function EventList({ events }: EventListProps) {
                       {event.category}
                     </span>
                     {event.status && (
-                      <span className="px-2 py-1 text-xs rounded bg-surface text-text-muted">
+                      <span className="px-2 py-1 text-xs rounded bg-bg-secondary text-text-muted">
                         {event.status}
                       </span>
                     )}
@@ -100,8 +96,8 @@ export function EventList({ events }: EventListProps) {
                 {/* Cost Pill */}
                 <div className={cn(
                   'flex items-center gap-3 px-4 py-3 rounded-xl',
-                  'bg-gradient-to-br from-surface to-surface/50',
-                  'border border-border/50'
+                  'bg-bg-secondary',
+                  'border border-border'
                 )}>
                   <div className="p-2 rounded-lg bg-primary/10">
                     <DollarSign className="w-5 h-5 text-primary" />

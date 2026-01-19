@@ -115,7 +115,7 @@ export function Dashboard() {
         <DepartmentChart data={stats.departmentWorkload} />
 
         {/* Team Members Card */}
-        <div className="glass rounded-xl p-6">
+        <div className="bg-surface border border-border rounded-xl p-6">
           <h3 className="text-lg font-semibold text-text-primary mb-4">
             Team Members
           </h3>
@@ -123,9 +123,9 @@ export function Dashboard() {
             {stats.teamMembers.map((member, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 p-3 rounded-lg bg-surface hover:bg-surface-hover transition-colors"
+                className="flex items-center gap-3 p-3 rounded-lg bg-bg-secondary hover:bg-surface-hover transition-colors"
               >
-                <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-sm font-medium">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-sm font-medium text-white">
                   {member.charAt(0).toUpperCase()}
                 </div>
                 <span className="text-sm text-text-secondary truncate">
@@ -138,7 +138,7 @@ export function Dashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="mt-6 glass rounded-xl p-6">
+      <div className="mt-6 bg-surface border border-border rounded-xl p-6">
         <h3 className="text-lg font-semibold text-text-primary mb-4">
           Status Breakdown
         </h3>

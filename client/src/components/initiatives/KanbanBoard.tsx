@@ -8,26 +8,26 @@ interface KanbanBoardProps {
   data: Record<InitiativeStatus, Initiative[]>;
 }
 
-const COLUMN_CONFIG: Record<InitiativeStatus, { borderColor: string; gradientFrom: string }> = {
+const COLUMN_CONFIG: Record<InitiativeStatus, { borderColor: string; bgColor: string }> = {
   'Not Started': {
     borderColor: 'border-t-status-not-started',
-    gradientFrom: 'from-status-not-started/20'
+    bgColor: 'bg-status-not-started/5'
   },
   'In Progress': {
     borderColor: 'border-t-status-in-progress',
-    gradientFrom: 'from-status-in-progress/20'
+    bgColor: 'bg-status-in-progress/5'
   },
   'On Hold': {
     borderColor: 'border-t-status-on-hold',
-    gradientFrom: 'from-status-on-hold/20'
+    bgColor: 'bg-status-on-hold/5'
   },
   'At Risk': {
     borderColor: 'border-t-status-at-risk',
-    gradientFrom: 'from-status-at-risk/20'
+    bgColor: 'bg-status-at-risk/5'
   },
   'Completed': {
     borderColor: 'border-t-status-completed',
-    gradientFrom: 'from-status-completed/20'
+    bgColor: 'bg-status-completed/5'
   },
 };
 
@@ -46,31 +46,30 @@ function KanbanColumn({
     <div
       className={cn(
         'flex flex-col min-w-[280px] max-w-[320px] flex-shrink-0',
-        'glass rounded-xl border-t-4 overflow-hidden',
+        'bg-surface border border-border rounded-xl border-t-4 overflow-hidden',
         'animate-fade-in-up opacity-0',
         config.borderColor
       )}
       style={{ animationDelay: `${columnIndex * 75}ms` }}
     >
-      {/* Column Header with gradient background */}
+      {/* Column Header */}
       <div className={cn(
         'p-4 border-b border-border',
-        'bg-gradient-to-b to-transparent',
-        config.gradientFrom
+        config.bgColor
       )}>
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-text-primary">{status}</h3>
           <span className={cn(
             'px-2.5 py-1 text-xs font-semibold rounded-full',
-            'bg-surface/80 text-text-primary backdrop-blur-sm',
-            'border border-border/50'
+            'bg-surface text-text-primary',
+            'border border-border'
           )}>
             {items.length}
           </span>
         </div>
       </div>
 
-      {/* Cards Container with better scrollbar */}
+      {/* Cards Container */}
       <div className="flex-1 p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-320px)] scrollbar-thin">
         {items.length === 0 ? (
           <div className="py-12 text-center">

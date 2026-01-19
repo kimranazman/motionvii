@@ -38,7 +38,7 @@ export function Events() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <EventFilters />
 
-        <div className="flex items-center gap-2 p-1 glass rounded-lg">
+        <div className="flex items-center gap-2 p-1 bg-surface border border-border rounded-lg">
           <button
             onClick={() => setViewMode('calendar')}
             className={cn(

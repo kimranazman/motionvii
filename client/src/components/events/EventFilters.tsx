@@ -30,7 +30,7 @@ export function EventFilters() {
           placeholder="Search events..."
           value={eventFilters.search || ''}
           onChange={(e) => setEventFilters({ search: e.target.value })}
-          className="w-48 pl-9 pr-4 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary/50 transition-colors"
+          className="w-48 pl-9 pr-4 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
         />
       </div>
 
@@ -40,7 +40,7 @@ export function EventFilters() {
         onChange={(e) =>
           setEventFilters({ category: e.target.value || undefined })
         }
-        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary focus:outline-none focus:border-primary/50"
+        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary focus:outline-none focus:border-primary"
       >
         <option value="">All categories</option>
         {categories.map((category) => (
@@ -56,7 +56,7 @@ export function EventFilters() {
         onChange={(e) =>
           setEventFilters({ month: e.target.value || undefined })
         }
-        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary focus:outline-none focus:border-primary/50"
+        className="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary focus:outline-none focus:border-primary"
       >
         <option value="">All months</option>
         {MONTHS.map((month) => (
@@ -70,7 +70,7 @@ export function EventFilters() {
       {hasActiveFilters && (
         <button
           onClick={clearFilters}
-          className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary transition-colors"
+          className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-surface-hover transition-colors"
         >
           <X className="w-4 h-4" />
           <span>Clear</span>

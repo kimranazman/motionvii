@@ -36,7 +36,7 @@ export function Header({ title, subtitle }: HeaderProps) {
           <input
             type="text"
             placeholder="Search..."
-            className="w-48 lg:w-64 pl-9 pr-4 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-colors"
+            className="w-48 lg:w-64 pl-9 pr-4 py-2 bg-surface border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
           />
         </div>
 
@@ -44,7 +44,7 @@ export function Header({ title, subtitle }: HeaderProps) {
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="p-2.5 rounded-lg glass hover:bg-surface-hover transition-colors disabled:opacity-50"
+          className="p-2.5 rounded-lg bg-surface border border-border hover:bg-surface-hover transition-colors disabled:opacity-50"
           title="Refresh data from Excel"
         >
           <RefreshCw
@@ -53,7 +53,7 @@ export function Header({ title, subtitle }: HeaderProps) {
         </button>
 
         {/* Notifications */}
-        <button className="p-2.5 rounded-lg glass hover:bg-surface-hover transition-colors relative">
+        <button className="p-2.5 rounded-lg bg-surface border border-border hover:bg-surface-hover transition-colors relative">
           <Bell className="w-5 h-5 text-text-secondary" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
         </button>

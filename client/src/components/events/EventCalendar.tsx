@@ -86,7 +86,7 @@ export function EventCalendar({ events }: EventCalendarProps) {
   };
 
   return (
-    <div className="glass rounded-xl p-4 sm:p-6">
+    <div className="bg-surface border border-border rounded-xl p-4 sm:p-6">
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
         initialView="dayGridMonth"

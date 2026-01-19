@@ -26,7 +26,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
           onClick={toggleSidebar}
         />
       )}
@@ -34,14 +34,14 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 h-full w-64 bg-bg-secondary/80 backdrop-blur-xl border-r border-border transition-transform duration-300 lg:translate-x-0',
+          'fixed top-0 left-0 z-50 h-full w-64 bg-surface border-r border-border transition-transform duration-300 lg:translate-x-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Logo */}
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center glow-sm">
+            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -51,7 +51,7 @@ export function Sidebar() {
           </div>
           <button
             onClick={toggleSidebar}
-            className="lg:hidden p-2 rounded-lg hover:bg-surface"
+            className="lg:hidden p-2 rounded-lg hover:bg-surface-hover"
           >
             <X className="w-5 h-5" />
           </button>
@@ -67,8 +67,8 @@ export function Sidebar() {
                 cn(
                   'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
                   isActive
-                    ? 'bg-primary/10 text-primary glow-sm border border-primary/30'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-surface'
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-hover'
                 )
               }
               onClick={() => {
@@ -83,12 +83,12 @@ export function Sidebar() {
 
         {/* Bottom section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
-          <div className="glass rounded-lg p-4">
+          <div className="card p-4">
             <p className="text-xs text-text-muted mb-1">Revenue Target 2026</p>
             <p className="text-xl font-bold text-primary">RM 1,000,000</p>
-            <div className="mt-2 h-2 bg-bg-primary rounded-full overflow-hidden">
+            <div className="mt-2 h-2 bg-bg-secondary rounded-full overflow-hidden">
               <div
-                className="h-full gradient-primary rounded-full"
+                className="h-full bg-primary rounded-full"
                 style={{ width: '0%' }}
               />
             </div>
@@ -100,7 +100,7 @@ export function Sidebar() {
       <button
         onClick={toggleSidebar}
         className={cn(
-          'fixed top-4 left-4 z-50 p-3 rounded-lg glass lg:hidden',
+          'fixed top-4 left-4 z-50 p-3 rounded-lg bg-surface border border-border shadow-sm lg:hidden',
           sidebarOpen && 'hidden'
         )}
       >

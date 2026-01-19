@@ -41,7 +41,7 @@ export function FilterBar() {
             placeholder="Search initiatives..."
             value={initiativeFilters.search || ''}
             onChange={(e) => setInitiativeFilters({ search: e.target.value })}
-            className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
           />
         </div>
 
@@ -51,7 +51,7 @@ export function FilterBar() {
           className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${
             showFilters || hasActiveFilters
               ? 'bg-primary/10 border-primary/30 text-primary'
-              : 'bg-surface border-border text-text-secondary hover:text-text-primary'
+              : 'bg-surface border-border text-text-secondary hover:text-text-primary hover:bg-surface-hover'
           }`}
         >
           <Filter className="w-4 h-4" />
@@ -67,7 +67,7 @@ export function FilterBar() {
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface border border-border text-text-secondary hover:text-text-primary transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface border border-border text-text-secondary hover:text-text-primary hover:bg-surface-hover transition-colors"
           >
             <X className="w-4 h-4" />
             <span>Clear</span>
@@ -77,7 +77,7 @@ export function FilterBar() {
 
       {/* Filter Options */}
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 glass rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-surface border border-border rounded-lg">
           {/* Status Filter */}
           <div>
             <label className="block text-sm text-text-muted mb-2">Status</label>
@@ -88,7 +88,7 @@ export function FilterBar() {
                   status: (e.target.value as InitiativeStatus) || undefined,
                 })
               }
-              className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary/50"
+              className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary"
             >
               <option value="">All statuses</option>
               {STATUSES.map((status) => (
@@ -109,7 +109,7 @@ export function FilterBar() {
               onChange={(e) =>
                 setInitiativeFilters({ department: e.target.value || undefined })
               }
-              className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary/50"
+              className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary"
             >
               <option value="">All departments</option>
               {filterOptions.departments.map((dept) => (
@@ -132,7 +132,7 @@ export function FilterBar() {
                   personInCharge: e.target.value || undefined,
                 })
               }
-              className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary/50"
+              className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary"
             >
               <option value="">All people</option>
               {filterOptions.persons.map((person) => (

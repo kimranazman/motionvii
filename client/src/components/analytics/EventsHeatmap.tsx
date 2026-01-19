@@ -65,7 +65,7 @@ export function EventsHeatmap({ events }: EventsHeatmapProps) {
   const totalCost = events.reduce((sum, e) => sum + e.estimatedCost, 0);
 
   return (
-    <div className="glass rounded-xl p-6">
+    <div className="bg-surface border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-text-primary">
           Events by Month
@@ -84,7 +84,7 @@ export function EventsHeatmap({ events }: EventsHeatmapProps) {
               'border border-border hover:border-border-hover'
             )}
             style={{
-              backgroundColor: `rgba(0, 212, 255, ${data.intensity * 0.4})`,
+              backgroundColor: `rgba(99, 102, 241, ${data.intensity * 0.3})`,
             }}
           >
             <p className="text-xs text-text-muted mb-1">{data.month}</p>
@@ -107,7 +107,7 @@ export function EventsHeatmap({ events }: EventsHeatmapProps) {
               key={intensity}
               className="w-4 h-4 rounded"
               style={{
-                backgroundColor: `rgba(0, 212, 255, ${intensity * 0.4})`,
+                backgroundColor: `rgba(99, 102, 241, ${intensity * 0.3})`,
               }}
             />
           ))}

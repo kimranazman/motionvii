@@ -18,7 +18,7 @@ export function ProgressSummary({ stats }: ProgressSummaryProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Revenue Progress */}
-      <div className="glass rounded-xl p-6">
+      <div className="bg-surface border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Target className="w-5 h-5 text-primary" />
@@ -34,9 +34,9 @@ export function ProgressSummary({ stats }: ProgressSummaryProps) {
               / {formatCurrency(stats.revenueTarget)}
             </span>
           </div>
-          <div className="h-2 bg-bg-primary rounded-full overflow-hidden">
+          <div className="h-2 bg-bg-secondary rounded-full overflow-hidden">
             <div
-              className="h-full gradient-primary rounded-full transition-all duration-500"
+              className="h-full bg-primary rounded-full transition-all duration-500"
               style={{
                 width: `${calculateProgress(stats.revenueProgress, stats.revenueTarget)}%`,
               }}
@@ -50,7 +50,7 @@ export function ProgressSummary({ stats }: ProgressSummaryProps) {
       </div>
 
       {/* Completion Rate */}
-      <div className="glass rounded-xl p-6">
+      <div className="bg-surface border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-accent/10">
             <CheckCircle className="w-5 h-5 text-accent" />
@@ -66,7 +66,7 @@ export function ProgressSummary({ stats }: ProgressSummaryProps) {
               {stats.initiativesByStatus['Completed']} / {stats.totalInitiatives}
             </span>
           </div>
-          <div className="h-2 bg-bg-primary rounded-full overflow-hidden">
+          <div className="h-2 bg-bg-secondary rounded-full overflow-hidden">
             <div
               className="h-full bg-accent rounded-full transition-all duration-500"
               style={{ width: `${completionRate}%` }}
@@ -77,7 +77,7 @@ export function ProgressSummary({ stats }: ProgressSummaryProps) {
       </div>
 
       {/* In Progress */}
-      <div className="glass rounded-xl p-6">
+      <div className="bg-surface border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <TrendingUp className="w-5 h-5 text-secondary" />
@@ -95,7 +95,7 @@ export function ProgressSummary({ stats }: ProgressSummaryProps) {
       </div>
 
       {/* At Risk */}
-      <div className="glass rounded-xl p-6">
+      <div className="bg-surface border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-status-at-risk/10">
             <AlertTriangle className="w-5 h-5 text-status-at-risk" />

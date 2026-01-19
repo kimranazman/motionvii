@@ -23,13 +23,13 @@ export function InitiativeModal() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-fade-in"
+        className="fixed inset-0 bg-black/30 z-50 animate-fade-in"
         onClick={closeInitiativeModal}
       />
 
       {/* Modal */}
       <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-2xl sm:max-h-[90vh] z-50 overflow-hidden animate-scale-in">
-        <div className="glass rounded-xl h-full flex flex-col overflow-hidden shadow-lg">
+        <div className="bg-surface border border-border rounded-xl h-full flex flex-col overflow-hidden shadow-lg">
           {/* Header */}
           <div className="flex items-start justify-between p-6 border-b border-border">
             <div className="flex-1 pr-4">
@@ -43,7 +43,7 @@ export function InitiativeModal() {
                   {initiative.status}
                 </span>
                 {initiative.department && (
-                  <span className="px-2 py-1 text-xs rounded bg-surface text-text-muted">
+                  <span className="px-2 py-1 text-xs rounded bg-bg-secondary text-text-muted">
                     {initiative.department}
                   </span>
                 )}
@@ -54,7 +54,7 @@ export function InitiativeModal() {
             </div>
             <button
               onClick={closeInitiativeModal}
-              className="p-2 rounded-lg hover:bg-surface transition-colors"
+              className="p-2 rounded-lg hover:bg-surface-hover transition-colors"
             >
               <X className="w-5 h-5 text-text-secondary" />
             </button>
@@ -64,7 +64,7 @@ export function InitiativeModal() {
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Objective & Key Result */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="p-4 rounded-lg bg-surface">
+              <div className="p-4 rounded-lg bg-bg-secondary">
                 <h3 className="text-sm font-medium text-text-muted mb-2">
                   Objective
                 </h3>
@@ -72,7 +72,7 @@ export function InitiativeModal() {
                   {initiative.objective || '-'}
                 </p>
               </div>
-              <div className="p-4 rounded-lg bg-surface">
+              <div className="p-4 rounded-lg bg-bg-secondary">
                 <h3 className="text-sm font-medium text-text-muted mb-2">
                   Key Result
                 </h3>
@@ -90,7 +90,7 @@ export function InitiativeModal() {
                   Tasks
                 </h3>
                 {initiative.monthlyObjective && (
-                  <div className="p-4 rounded-lg bg-surface">
+                  <div className="p-4 rounded-lg bg-bg-secondary">
                     <p className="text-xs text-text-muted mb-1">
                       Monthly Objective
                     </p>
@@ -100,7 +100,7 @@ export function InitiativeModal() {
                   </div>
                 )}
                 {initiative.weeklyTasks && (
-                  <div className="p-4 rounded-lg bg-surface">
+                  <div className="p-4 rounded-lg bg-bg-secondary">
                     <p className="text-xs text-text-muted mb-1">Weekly Tasks</p>
                     <p className="text-text-secondary whitespace-pre-wrap">
                       {initiative.weeklyTasks}
@@ -113,7 +113,7 @@ export function InitiativeModal() {
             {/* Meta Grid */}
             <div className="grid gap-4 sm:grid-cols-2">
               {/* Timeline */}
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-bg-secondary">
                 <Calendar className="w-5 h-5 text-primary" />
                 <div>
                   <p className="text-xs text-text-muted">Timeline</p>
@@ -125,7 +125,7 @@ export function InitiativeModal() {
               </div>
 
               {/* Person in Charge */}
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-bg-secondary">
                 <User className="w-5 h-5 text-accent" />
                 <div>
                   <p className="text-xs text-text-muted">Person in Charge</p>
@@ -137,7 +137,7 @@ export function InitiativeModal() {
 
               {/* Accountable */}
               {initiative.accountable && (
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-bg-secondary">
                   <User className="w-5 h-5 text-secondary" />
                   <div>
                     <p className="text-xs text-text-muted">Accountable</p>
@@ -148,7 +148,7 @@ export function InitiativeModal() {
 
               {/* Resources */}
               {initiative.resourcesFinancial && (
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-bg-secondary">
                   <DollarSign className="w-5 h-5 text-status-on-hold" />
                   <div>
                     <p className="text-xs text-text-muted">Financial Resources</p>
@@ -162,7 +162,7 @@ export function InitiativeModal() {
 
             {/* Remarks */}
             {initiative.remarks && (
-              <div className="p-4 rounded-lg bg-surface border border-status-on-hold/30">
+              <div className="p-4 rounded-lg bg-bg-secondary border border-status-on-hold/30">
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle className="w-4 h-4 text-status-on-hold" />
                   <h3 className="text-sm font-medium text-text-muted">Remarks</h3>

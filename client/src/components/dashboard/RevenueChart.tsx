@@ -45,7 +45,7 @@ export function RevenueChart({ target, current }: RevenueChartProps) {
   const data = generateMonthlyData(target, current);
 
   return (
-    <div className="glass rounded-xl p-6">
+    <div className="bg-surface border border-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-text-primary">
@@ -71,41 +71,42 @@ export function RevenueChart({ target, current }: RevenueChartProps) {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorEvents" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00d4ff" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#00d4ff" stopOpacity={0} />
+                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorTraining" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00ff88" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#00ff88" stopOpacity={0} />
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
+              stroke="#e2e8f0"
             />
             <XAxis
               dataKey="month"
-              stroke="rgba(255,255,255,0.5)"
+              stroke="#94a3b8"
               fontSize={12}
             />
             <YAxis
-              stroke="rgba(255,255,255,0.5)"
+              stroke="#94a3b8"
               fontSize={12}
               tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'rgba(17, 17, 17, 0.95)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e2e8f0',
                 borderRadius: '8px',
-                color: '#fff',
+                color: '#0f172a',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
               formatter={(value) => formatCurrency(value as number)}
             />
             <Area
               type="monotone"
               dataKey="events"
-              stroke="#00d4ff"
+              stroke="#6366f1"
               fillOpacity={1}
               fill="url(#colorEvents)"
               strokeWidth={2}
@@ -113,7 +114,7 @@ export function RevenueChart({ target, current }: RevenueChartProps) {
             <Area
               type="monotone"
               dataKey="training"
-              stroke="#00ff88"
+              stroke="#10b981"
               fillOpacity={1}
               fill="url(#colorTraining)"
               strokeWidth={2}

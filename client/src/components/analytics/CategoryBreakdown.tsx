@@ -56,7 +56,7 @@ export function CategoryBreakdown({ events }: CategoryBreakdownProps) {
   }, [events]);
 
   return (
-    <div className="glass rounded-xl p-6">
+    <div className="bg-surface border border-border rounded-xl p-6">
       <h3 className="text-lg font-semibold text-text-primary mb-6">
         Event Category Breakdown
       </h3>
@@ -85,10 +85,11 @@ export function CategoryBreakdown({ events }: CategoryBreakdownProps) {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'rgba(17, 17, 17, 0.95)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: '#0f172a',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
                   formatter={(value) => [`${value} events`, 'Count']}
                 />
@@ -125,10 +126,11 @@ export function CategoryBreakdown({ events }: CategoryBreakdownProps) {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'rgba(17, 17, 17, 0.95)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: '#0f172a',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
                   formatter={(value) => [formatCurrency(value as number), 'Budget']}
                 />
@@ -173,7 +175,7 @@ export function CategoryBreakdown({ events }: CategoryBreakdownProps) {
               return (
                 <tr
                   key={item.name}
-                  className="border-b border-border/50 hover:bg-surface"
+                  className="border-b border-border/50 hover:bg-surface-hover"
                 >
                   <td className="py-3">
                     <div className="flex items-center gap-2">

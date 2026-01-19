@@ -23,13 +23,13 @@ export function EventModal() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-fade-in"
+        className="fixed inset-0 bg-black/30 z-50 animate-fade-in"
         onClick={closeEventModal}
       />
 
       {/* Modal */}
       <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-2xl sm:max-h-[90vh] z-50 overflow-hidden animate-scale-in">
-        <div className="glass rounded-xl h-full flex flex-col overflow-hidden shadow-lg">
+        <div className="bg-surface border border-border rounded-xl h-full flex flex-col overflow-hidden shadow-lg">
           {/* Header */}
           <div className="flex items-start justify-between p-6 border-b border-border">
             <div className="flex-1 pr-4">
@@ -43,7 +43,7 @@ export function EventModal() {
                   {event.category}
                 </span>
                 {event.status && (
-                  <span className="px-2 py-1 text-xs rounded bg-surface text-text-muted">
+                  <span className="px-2 py-1 text-xs rounded bg-bg-secondary text-text-muted">
                     {event.status}
                   </span>
                 )}
@@ -54,7 +54,7 @@ export function EventModal() {
             </div>
             <button
               onClick={closeEventModal}
-              className="p-2 rounded-lg hover:bg-surface transition-colors"
+              className="p-2 rounded-lg hover:bg-surface-hover transition-colors"
             >
               <X className="w-5 h-5 text-text-secondary" />
             </button>
@@ -64,7 +64,7 @@ export function EventModal() {
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Key Details */}
             <div className="grid gap-4 sm:grid-cols-3">
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-bg-secondary">
                 <Calendar className="w-5 h-5 text-primary" />
                 <div>
                   <p className="text-xs text-text-muted">Date</p>
@@ -72,7 +72,7 @@ export function EventModal() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-bg-secondary">
                 <MapPin className="w-5 h-5 text-accent" />
                 <div>
                   <p className="text-xs text-text-muted">Location</p>
@@ -80,7 +80,7 @@ export function EventModal() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-bg-secondary">
                 <DollarSign className="w-5 h-5 text-status-on-hold" />
                 <div>
                   <p className="text-xs text-text-muted">Est. Cost</p>
@@ -93,7 +93,7 @@ export function EventModal() {
 
             {/* Why Attend */}
             {event.whyAttend && (
-              <div className="p-4 rounded-lg bg-surface">
+              <div className="p-4 rounded-lg bg-bg-secondary">
                 <div className="flex items-center gap-2 mb-2">
                   <Target className="w-4 h-4 text-primary" />
                   <h3 className="text-sm font-medium text-text-muted">
@@ -106,7 +106,7 @@ export function EventModal() {
 
             {/* Target Companies */}
             {event.targetCompanies && (
-              <div className="p-4 rounded-lg bg-surface">
+              <div className="p-4 rounded-lg bg-bg-secondary">
                 <div className="flex items-center gap-2 mb-2">
                   <Users className="w-4 h-4 text-accent" />
                   <h3 className="text-sm font-medium text-text-muted">
@@ -119,7 +119,7 @@ export function EventModal() {
 
             {/* Action Required */}
             {event.actionRequired && (
-              <div className="p-4 rounded-lg bg-surface border border-primary/30">
+              <div className="p-4 rounded-lg bg-bg-secondary border border-primary/30">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText className="w-4 h-4 text-primary" />
                   <h3 className="text-sm font-medium text-text-muted">

@@ -15,28 +15,24 @@ interface KPICardProps {
 
 const variantStyles = {
   default: {
-    iconBg: 'bg-surface',
-    iconColor: 'text-text-secondary',
-    accentColor: 'from-text-secondary/50 to-text-secondary/20',
-    glowColor: 'hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)]',
+    iconBg: 'bg-slate-100',
+    iconColor: 'text-slate-600',
+    accentColor: 'from-slate-400 to-slate-300',
   },
   primary: {
     iconBg: 'bg-primary/10',
     iconColor: 'text-primary',
     accentColor: 'from-primary to-secondary',
-    glowColor: 'hover:shadow-[0_4px_20px_rgba(0,212,255,0.25)]',
   },
   success: {
     iconBg: 'bg-accent/10',
     iconColor: 'text-accent',
-    accentColor: 'from-accent to-accent/50',
-    glowColor: 'hover:shadow-[0_4px_20px_rgba(0,255,136,0.25)]',
+    accentColor: 'from-accent to-accent/60',
   },
   warning: {
     iconBg: 'bg-status-on-hold/10',
     iconColor: 'text-status-on-hold',
-    accentColor: 'from-status-on-hold to-status-on-hold/50',
-    glowColor: 'hover:shadow-[0_4px_20px_rgba(245,158,11,0.25)]',
+    accentColor: 'from-status-on-hold to-status-on-hold/60',
   },
 };
 
@@ -53,9 +49,8 @@ export function KPICard({
   return (
     <div
       className={cn(
-        'glass rounded-xl overflow-hidden transition-all duration-300',
-        'hover:scale-[1.02] hover:border-border-hover',
-        styles.glowColor
+        'bg-surface border border-border rounded-xl overflow-hidden transition-all duration-300',
+        'hover:shadow-md hover:-translate-y-0.5'
       )}
     >
       {/* Gradient accent line at top */}

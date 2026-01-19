@@ -4,7 +4,7 @@ import { GlowBackground } from './GlowBackground';
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-bg-secondary">
       <GlowBackground />
       <Sidebar />
       <main className="lg:ml-64 min-h-screen relative z-10">

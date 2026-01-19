@@ -16,9 +16,9 @@ const STATUS_BORDER_COLORS: Record<InitiativeStatus, string> = {
 };
 
 const PRIORITY_CONFIG: Record<string, { label: string; color: string }> = {
-  'Objective 1': { label: 'High', color: 'bg-status-at-risk/20 text-status-at-risk' },
-  'Objective 2': { label: 'Medium', color: 'bg-status-on-hold/20 text-status-on-hold' },
-  'Objective 3': { label: 'Normal', color: 'bg-status-in-progress/20 text-status-in-progress' },
+  'Objective 1': { label: 'High', color: 'bg-status-at-risk/10 text-status-at-risk' },
+  'Objective 2': { label: 'Medium', color: 'bg-status-on-hold/10 text-status-on-hold' },
+  'Objective 3': { label: 'Normal', color: 'bg-status-in-progress/10 text-status-in-progress' },
 };
 
 export function InitiativeCard({ initiative }: InitiativeCardProps) {
@@ -33,18 +33,14 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
   return (
     <div
       className={cn(
-        'group relative rounded-lg bg-bg-secondary/50 border border-border cursor-pointer',
+        'group relative rounded-lg bg-surface border border-border cursor-pointer',
         'border-l-4 overflow-hidden',
         'transition-all duration-200',
-        'hover:translate-y-[-2px] hover:border-border-hover hover:bg-surface',
-        'hover:shadow-[0_4px_12px_rgba(0,0,0,0.4),0_0_20px_rgba(0,212,255,0.1)]',
+        'hover:-translate-y-0.5 hover:shadow-md hover:border-border-hover',
         STATUS_BORDER_COLORS[initiative.status]
       )}
       onClick={handleClick}
     >
-      {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
       <div className="relative p-4">
         {/* Header with priority badge */}
         <div className="flex items-start justify-between gap-2 mb-2">
@@ -73,7 +69,7 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
         <div className="flex flex-wrap gap-2 text-xs">
           {/* Department */}
           {initiative.department && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded bg-surface text-text-muted">
+            <div className="flex items-center gap-1 px-2 py-1 rounded bg-bg-secondary text-text-muted">
               <Building2 className="w-3 h-3" />
               <span>{initiative.department}</span>
             </div>
@@ -81,7 +77,7 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
 
           {/* Person in Charge */}
           {initiative.personInCharge && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded bg-surface text-text-muted">
+            <div className="flex items-center gap-1 px-2 py-1 rounded bg-bg-secondary text-text-muted">
               <User className="w-3 h-3" />
               <span>{truncateText(initiative.personInCharge, 15)}</span>
             </div>
@@ -89,7 +85,7 @@ export function InitiativeCard({ initiative }: InitiativeCardProps) {
 
           {/* Due Date */}
           {initiative.endDate && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded bg-surface text-text-muted">
+            <div className="flex items-center gap-1 px-2 py-1 rounded bg-bg-secondary text-text-muted">
               <Calendar className="w-3 h-3" />
               <span>{formatDate(initiative.endDate)}</span>
             </div>
