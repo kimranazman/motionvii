@@ -23,13 +23,13 @@ export function EventModal() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-fade-in"
         onClick={closeEventModal}
       />
 
       {/* Modal */}
-      <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-2xl sm:max-h-[90vh] z-50 overflow-hidden">
-        <div className="glass rounded-xl h-full flex flex-col overflow-hidden">
+      <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-2xl sm:max-h-[90vh] z-50 overflow-hidden animate-scale-in">
+        <div className="glass rounded-xl h-full flex flex-col overflow-hidden shadow-lg">
           {/* Header */}
           <div className="flex items-start justify-between p-6 border-b border-border">
             <div className="flex-1 pr-4">
